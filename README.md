@@ -20,6 +20,7 @@ RETROES is a classic-style game launcher and collection built with Java Swing. I
 
 ## 🗂️ Directory Structure
 
+```
 RETROES/
 │
 ├── assets/                  # All global assets (fonts, images, etc.)
@@ -36,7 +37,7 @@ RETROES/
 │
 ├── users.txt                # Stores user credentials
 └── README.md
-
+```
 
 ## 🚀 How to Run
 
@@ -48,37 +49,36 @@ RETROES/
 1. **Clone the repository**  
    ```bash
    git clone https://github.com/zZOKofficial/RETROES.git
-   cd RETROES
 
-	2.	Open in IntelliJ or any IDE
+2.	Open in IntelliJ or any IDE
 Import the src/ directory as your source root.
-	3.	Run Main.java
+3.	Run Main.java
 This will open the login screen. From there, sign up or log in to access the game hub.
 
 
 
-🛠️ Customization
-	•	Assets: Replace images in the assets/ folder to re-theme the games.
-	•	Fonts: Add or change fonts by placing them in assets/fonts/ and loading them in the code.
-	•	Games: Add your own games by creating a new package in games/, then integrate it with the homepage.
+### 🛠️ Customization
+- Assets: Replace images in the assets/ folder to re-theme the games.
+- Fonts: Add or change fonts by placing them in assets/fonts/ and loading them in the code.
+- Games: Add your own games by creating a new package in games/, then integrate it with the homepage.
 
+---
 
+### 💡 Planned Features
+- 🔒 Encrypted user data
+- 🏆 Leaderboard with top scores
+- 🖱️ Mouse-controlled UI in all games
+- 🌐 Online multiplayer (experimental)
 
-💡 Planned Features
-	•	🔒 Encrypted user data
-	•	🏆 Leaderboard with top scores
-	•	🖱️ Mouse-controlled UI in all games
-	•	🌐 Online multiplayer (experimental)
+---
 
+### 🤝 Contributors
+- Md. Maruf Hossain (a.k.a. Zareef) – Core Developer, Game Designer, UI/UX Lead
+- More contributors coming soon…
 
+---
 
-🤝 Contributors
-	•	Md. Maruf Hossain (a.k.a. Zareef) – Core Developer, Game Designer, UI/UX Lead
-	•	More contributors coming soon…
+### 📜 License
 
-
-
-📜 License
-
-This project is for educational and demo purposes.
-Contact @zZOKofficial if you’d like to collaborate, modify, or extend for production use.
+This project is for educational and demo purposes.  
+Contact **@zZOKofficial** if you’d like to collaborate, modify, or extend for production use.
