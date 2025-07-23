@@ -37,7 +37,6 @@ RETROES/
 ├── users.txt                # Stores user credentials
 └── README.md
 
----
 
 ## 🚀 How to Run
 
@@ -48,7 +47,7 @@ RETROES/
 ### 🧭 Steps:
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/your-username/RETROES.git
+   git clone https://github.com/zZOKofficial/RETROES.git
    cd RETROES
 
 	2.	Open in IntelliJ or any IDE
