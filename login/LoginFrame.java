@@ -1,5 +1,6 @@
 package login;
 
+import app.AppPaths;
 import app.AppVersion;
 import createAccount.CreateAccountFrame;
 import homepage.Homepage;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class LoginFrame extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private static final String USER_DATA_FILE = "data/users.txt";
+    private static final String USER_DATA_FILE = AppPaths.userFile("users.txt").toString();
     private static final int SALT_LENGTH = 16;
     private static final int HASH_ITERATIONS = 120000;
     private static final int HASH_KEY_LENGTH = 256;
@@ -35,15 +36,15 @@ public class LoginFrame extends JFrame {
         setLayout(null); // Allows custom component positioning
 
         try {
-            backgroundImage = Toolkit.getDefaultToolkit().getImage("homepage/assets/HomeBackground.png");
+            backgroundImage = Toolkit.getDefaultToolkit().getImage(AppPaths.assetString("homepage/assets/HomeBackground.png"));
         } catch (Exception e) {
             System.out.println("Error loading background image.");
             e.printStackTrace();
         }
 
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/joystixmonospace.otf")).deriveFont(60f);
-            textFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/cinzeld.ttf")).deriveFont(24f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/joystixmonospace.otf").toFile()).deriveFont(60f);
+            textFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/cinzeld.ttf").toFile()).deriveFont(24f);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(titleFont);

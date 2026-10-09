@@ -1,5 +1,6 @@
 package sounds;
 
+import app.AppPaths;
 import com.jcraft.jorbis.VorbisBridge;
 import com.jcraft.jorbis.VorbisFile;
 
@@ -10,11 +11,12 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.Timer;
 import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class MusicPlayer {
-    private static final String MUSIC_PATH = "sounds/dragonscale.ogg";
+    private static final String MUSIC_PATH = AppPaths.assetString("sounds/dragonscale.ogg");
     private static final int FADE_STEP_MS = 33;
     private static final int DECODE_CHUNK = 8192;
     private static final MusicPlayer INSTANCE = new MusicPlayer();

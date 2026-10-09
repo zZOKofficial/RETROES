@@ -1,5 +1,6 @@
 package games.whatTheSnake;
 
+import app.AppPaths;
 import homepage.Homepage;
 
 import javax.swing.*;
@@ -61,7 +62,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
         bonusFood = null;
 
         try {
-            pixeloidFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/cinzeld.ttf")).deriveFont(20f);
+            pixeloidFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/cinzeld.ttf").toFile()).deriveFont(20f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(pixeloidFont);
         } catch (IOException | FontFormatException e) {
@@ -71,7 +72,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
 
         // Load background image
         try {
-            backgroundImage = new ImageIcon("games/whatTheSnake/assets/grass.png").getImage();
+            backgroundImage = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/grass.png")).getImage();
         } catch (Exception e) {
             e.printStackTrace();
             backgroundImage = null;
@@ -79,11 +80,11 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
 
         // Load snake images
         try {
-            snakeHeadUp = new ImageIcon("games/whatTheSnake/assets/upmouth.png").getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
-            snakeHeadDown = new ImageIcon("games/whatTheSnake/assets/downmouth.png").getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
-            snakeHeadLeft = new ImageIcon("games/whatTheSnake/assets/leftmouth.png").getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
-            snakeHeadRight = new ImageIcon("games/whatTheSnake/assets/rightmouth.png").getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
-            snakeBodyImage = new ImageIcon("games/whatTheSnake/assets/snakeimage.png").getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
+            snakeHeadUp = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/upmouth.png")).getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
+            snakeHeadDown = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/downmouth.png")).getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
+            snakeHeadLeft = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/leftmouth.png")).getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
+            snakeHeadRight = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/rightmouth.png")).getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
+            snakeBodyImage = new ImageIcon(AppPaths.assetString("games/whatTheSnake/assets/snakeimage.png")).getImage().getScaledInstance(UNIT_SIZE, UNIT_SIZE, Image.SCALE_SMOOTH);
         } catch (Exception e) {
             e.printStackTrace();
             snakeHeadUp = null;
@@ -217,7 +218,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
     }
 
     private void saveHighScore() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("highScores/highscore.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(AppPaths.userFile("highscore.txt").toFile()))) {
             StringBuilder content = new StringBuilder();
             String line;
             boolean updated = false;
@@ -232,7 +233,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
             if (!updated) {
                 content.append(GAME_NAME).append(": ").append(highScore).append("\n");
             }
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("highScores/highscore.txt"))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(AppPaths.userFile("highscore.txt").toFile()))) {
                 writer.write(content.toString());
             }
         } catch (IOException e) {
@@ -241,7 +242,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
     }
 
     private void loadHighScore() {
-        File file = new File("highScores/highscore.txt");
+        File file = AppPaths.userFile("highscore.txt").toFile();
         if (!file.exists()) {
             try {
                 file.createNewFile();

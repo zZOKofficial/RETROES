@@ -1,5 +1,6 @@
 package highScores;
 
+import app.AppPaths;
 import homepage.Homepage;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class HighScores extends JFrame {
     private JTextArea scoreArea;
-    private static final String SCORE_FILE = "highScores/highscore.txt";
+    private static final String SCORE_FILE = AppPaths.userFile("highscore.txt").toString();
     private Font titleFont, textFont;
     private final String userName;
 
@@ -25,7 +26,7 @@ public class HighScores extends JFrame {
 
 
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/04b03.ttf")).deriveFont(50f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/04b03.ttf").toFile()).deriveFont(50f);
             textFont = titleFont.deriveFont(24f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(titleFont);

@@ -1,5 +1,6 @@
 package games.flapocalypse;
 
+import app.AppPaths;
 import homepage.Homepage;
 
 import javax.swing.*;
@@ -61,10 +62,10 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
         gamePanel.addKeyListener(this);
         add(gamePanel);
 
-        backgroundImg = new ImageIcon(getClass().getResource("/games/flapocalypse/assets/flappybirdbg.png")).getImage();
-        birdImg = new ImageIcon(getClass().getResource("/games/flapocalypse/assets/flappybird.png")).getImage();
-        topPipeImg = new ImageIcon(getClass().getResource("/games/flapocalypse/assets/toppipe.png")).getImage();
-        bottomPipeImg = new ImageIcon(getClass().getResource("/games/flapocalypse/assets/bottompipe.png")).getImage();
+        backgroundImg = new ImageIcon(AppPaths.assetString("games/flapocalypse/assets/flappybirdbg.png")).getImage();
+        birdImg = new ImageIcon(AppPaths.assetString("games/flapocalypse/assets/flappybird.png")).getImage();
+        topPipeImg = new ImageIcon(AppPaths.assetString("games/flapocalypse/assets/toppipe.png")).getImage();
+        bottomPipeImg = new ImageIcon(AppPaths.assetString("games/flapocalypse/assets/bottompipe.png")).getImage();
 
         bird = new Bird(birdImg);
 
@@ -72,7 +73,7 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
         gameLoop = new Timer(1000 / 60, this);
 
         try {
-            File fontFile = new File("fonts/cinzeld.ttf");
+            File fontFile = AppPaths.asset("fonts/cinzeld.ttf").toFile();
             customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(24f);
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
         } catch (FontFormatException | IOException e) {
@@ -195,7 +196,7 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     }
 
     private void readHighScore() {
-        File file = new File("highScores/highscore.txt");
+        File file = AppPaths.userFile("highscore.txt").toFile();
         if (!file.exists()) {
             highScore = 0;
             return;
@@ -213,7 +214,7 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     }
 
     private void updateHighScore() {
-        File file = new File("highScores/highscore.txt");
+        File file = AppPaths.userFile("highscore.txt").toFile();
         try {
             file.getParentFile().mkdirs();
             if (!file.exists()) {

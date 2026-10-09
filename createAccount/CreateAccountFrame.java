@@ -1,5 +1,6 @@
 package createAccount;
 
+import app.AppPaths;
 import login.LoginFrame;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ public class CreateAccountFrame extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton registerButton, showPasswordButton;
-    private static final String FILE_NAME = "data/users.txt";
+    private static final String FILE_NAME = AppPaths.userFile("users.txt").toString();
     private boolean isPasswordVisible = false;
     private Image backgroundImage;
     private Font titleFont, textFont;
@@ -25,7 +26,7 @@ public class CreateAccountFrame extends JFrame {
 
 
         try {
-            backgroundImage = Toolkit.getDefaultToolkit().getImage("homepage/assets/HomeBackground.png");
+            backgroundImage = Toolkit.getDefaultToolkit().getImage(AppPaths.assetString("homepage/assets/HomeBackground.png"));
         } catch (Exception e) {
             System.out.println("Error loading background image.");
             e.printStackTrace();
@@ -33,8 +34,8 @@ public class CreateAccountFrame extends JFrame {
 
 
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/joystixmonospace.otf")).deriveFont(60f);
-            textFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/cinzeld.ttf")).deriveFont(24f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/joystixmonospace.otf").toFile()).deriveFont(60f);
+            textFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/cinzeld.ttf").toFile()).deriveFont(24f);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(titleFont);

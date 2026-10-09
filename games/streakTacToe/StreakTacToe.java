@@ -1,5 +1,6 @@
 package games.streakTacToe;
 
+import app.AppPaths;
 import homepage.Homepage;
 
 import java.awt.*;
@@ -9,7 +10,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class StreakTacToe implements ActionListener {
-    private static final String SCORE_FILE = "highScores/highscore.txt";
+    private static final String SCORE_FILE = AppPaths.userFile("highscore.txt").toString();
     private Random random = new Random();
     public JFrame frame = new JFrame();
     private JPanel title_panel = new JPanel();
@@ -101,7 +102,7 @@ public class StreakTacToe implements ActionListener {
 
     private void loadPixelFont() {
         try {
-            pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/04b03.ttf")).deriveFont(36f);
+            pixelFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/04b03.ttf").toFile()).deriveFont(36f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(pixelFont);
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package credits;
 
+import app.AppPaths;
 import homepage.Homepage;
 
 import javax.swing.*;
@@ -13,8 +14,8 @@ public class Credits extends JFrame {
     private Timer timer;
     private int yOffset;
     private static final int SPEED = 2;
-    private static final String FONT_PATH_04B03 = "fonts/04b03.ttf";
-    private static final String FONT_PATH_JOYSTIX = "fonts/joystixmonospace.otf";
+    private static final String FONT_PATH_04B03 = AppPaths.assetString("fonts/04b03.ttf");
+    private static final String FONT_PATH_JOYSTIX = AppPaths.assetString("fonts/joystixmonospace.otf");
     private final String userName;
 
     public Credits(String userName) {

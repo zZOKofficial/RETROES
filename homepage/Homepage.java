@@ -1,5 +1,6 @@
 package homepage;
 
+import app.AppPaths;
 import app.AppVersion;
 
 import javax.swing.*;
@@ -30,15 +31,15 @@ public class Homepage extends JFrame {
         setLayout(null);
 
         try {
-            backgroundImage = Toolkit.getDefaultToolkit().getImage("homepage/assets/HomeBackground.png");
+            backgroundImage = Toolkit.getDefaultToolkit().getImage(AppPaths.assetString("homepage/assets/HomeBackground.png"));
         } catch (Exception e) {
             System.out.println("Error loading background image.");
             e.printStackTrace();
         }
 
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/joystixmonospace.otf")).deriveFont(60f);
-            textFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/cinzeld.ttf")).deriveFont(24f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/joystixmonospace.otf").toFile()).deriveFont(60f);
+            textFont = Font.createFont(Font.TRUETYPE_FONT, AppPaths.asset("fonts/cinzeld.ttf").toFile()).deriveFont(24f);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(titleFont);
