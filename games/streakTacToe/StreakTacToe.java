@@ -1,12 +1,15 @@
 package games.streakTacToe;
 
+import homepage.Homepage;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
 public class StreakTacToe implements ActionListener {
+    private static final String SCORE_FILE = "highScores/highscore.txt";
     private Random random = new Random();
     public JFrame frame = new JFrame();
     private JPanel title_panel = new JPanel();
@@ -15,14 +18,19 @@ public class StreakTacToe implements ActionListener {
     private JLabel textfield = new JLabel();
     private JLabel scoreLabel = new JLabel("X: 0 | O: 0");
     private JButton restartButton = new JButton("Restart");
+    private JButton homepageButton = new JButton("Homepage");
     private Font pixelFont;
     private boolean player1_turn;
     private JButton[] button;
     private int gridSize = 3;
     private int xScore = 0, oScore = 0;
     private int roundCount = 0;
+    private int xSeriesWins = 0, oSeriesWins = 0;
+    private final String userName;
 
-    public StreakTacToe() {
+    public StreakTacToe(String userName) {
+        this.userName = userName;
+        loadSeriesWins();
         initializeGame();
         firstTurn();
     }
@@ -31,9 +39,10 @@ public class StreakTacToe implements ActionListener {
         loadPixelFont();
 
         frame.setSize(1280, 720);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(50, 50, 50));
         frame.setLayout(new BorderLayout());
+        frame.setLocationRelativeTo(null);
 
         textfield.setBackground(new Color(25, 25, 25));
         textfield.setForeground(new Color(25, 255, 0));
@@ -58,8 +67,16 @@ public class StreakTacToe implements ActionListener {
         restartButton.setFocusable(false);
         restartButton.addActionListener(e -> resetGame());
 
+        homepageButton.setFont(pixelFont.deriveFont(20f));
+        homepageButton.setFocusable(false);
+        homepageButton.addActionListener(e -> {
+            frame.dispose();
+            new Homepage(userName);
+        });
+
         control_panel.setLayout(new FlowLayout());
         control_panel.add(restartButton);
+        control_panel.add(homepageButton);
 
         frame.add(title_panel, BorderLayout.NORTH);
         frame.add(button_panel, BorderLayout.CENTER);
@@ -171,6 +188,12 @@ public class StreakTacToe implements ActionListener {
 
     private void declareWinner() {
         String winner = xScore > oScore ? "X Wins the Series!" : "O Wins the Series!";
+        if (xScore > oScore) {
+            xSeriesWins++;
+        } else if (oScore > xScore) {
+            oSeriesWins++;
+        }
+        saveSeriesWins();
         JOptionPane.showMessageDialog(frame, winner, "Game Over", JOptionPane.INFORMATION_MESSAGE);
         resetGame();
     }
@@ -185,11 +208,70 @@ public class StreakTacToe implements ActionListener {
         firstTurn();
     }
 
+    private void loadSeriesWins() {
+        File file = new File(SCORE_FILE);
+        if (!file.exists()) {
+            return;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("StreakTacToe:")) {
+                    String data = line.substring(line.indexOf(':') + 1).trim();
+                    String[] parts = data.split("\\|");
+                    for (String part : parts) {
+                        part = part.trim();
+                        if (part.startsWith("X=")) {
+                            xSeriesWins = Integer.parseInt(part.substring(2).trim());
+                        } else if (part.startsWith("O=")) {
+                            oSeriesWins = Integer.parseInt(part.substring(2).trim());
+                        }
+                    }
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveSeriesWins() {
+        File file = new File(SCORE_FILE);
+        try {
+            file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            boolean updated = false;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("StreakTacToe:")) {
+                    content.append("StreakTacToe: X=").append(xSeriesWins).append(" | O=").append(oSeriesWins).append("\n");
+                    updated = true;
+                } else {
+                    content.append(line).append("\n");
+                }
+            }
+            if (!updated) {
+                content.append("StreakTacToe: X=").append(xSeriesWins).append(" | O=").append(oSeriesWins).append("\n");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(content.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        StreakTacToe game = new StreakTacToe();
-        game.frame.setSize(1280, 720);
-        game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        game.frame.setLocationRelativeTo(null);
-        game.frame.setVisible(true);
+        new StreakTacToe("Player");
     }
 }

@@ -41,13 +41,14 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     private int velocityX = -4, velocityY = 0, gravity = 1;
     private final ArrayList<Pipe> pipes = new ArrayList<>();
     private Timer gameLoop, placePipeTimer;
-    private boolean gameOver = false;
     private double score = 0;
     private double highScore = 0;
     private String gameState = "START";
     private GamePanel gamePanel;
+    private final String userName;
 
-    public Flapocalypse() {
+    public Flapocalypse(String userName) {
+        this.userName = userName;
         setTitle("Flapocalypse");
         setSize(boardWidth, boardHeight);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -194,7 +195,12 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     }
 
     private void readHighScore() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("highScores/highscore.txt"))) {
+        File file = new File("highScores/highscore.txt");
+        if (!file.exists()) {
+            highScore = 0;
+            return;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("Flapocalypse:")) {
@@ -207,18 +213,34 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     }
 
     private void updateHighScore() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("highScores/highscore.txt"))) {
+        File file = new File("highScores/highscore.txt");
+        try {
+            file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             StringBuilder updatedContent = new StringBuilder();
             String line;
+            boolean updated = false;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("Flapocalypse:")) {
                     updatedContent.append("Flapocalypse: ").append((int) highScore).append("\n");
+                    updated = true;
                 } else {
                     updatedContent.append(line).append("\n");
                 }
             }
+            if (!updated) {
+                updatedContent.append("Flapocalypse: ").append((int) highScore).append("\n");
+            }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("highScores/highscore.txt"))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                 writer.write(updatedContent.toString());
             }
         } catch (IOException e) {
@@ -268,7 +290,7 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
 
     private void goToHomepage() {
         dispose();
-        new Homepage("Player");
+        new Homepage(userName);
     }
 
     @Override
@@ -277,6 +299,6 @@ public class Flapocalypse extends JFrame implements ActionListener, KeyListener 
     public void keyTyped(KeyEvent e) {}
 
     public static void main(String[] args) {
-        new Flapocalypse();
+        new Flapocalypse("Player");
     }
 }

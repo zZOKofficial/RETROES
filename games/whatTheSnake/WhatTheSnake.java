@@ -1,5 +1,7 @@
 package games.whatTheSnake;
 
+import homepage.Homepage;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -25,7 +27,6 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
     private char direction = 'R';
     private boolean isRunning = false;
     private boolean isGameOver = false;
-    private boolean isGameStarted = false;
     private int score = 0;
     private int highScore = 0;
     private int bonusFoodTimer = 0;
@@ -40,11 +41,15 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
     private Image snakeBodyImage;
 
     private JButton startButton;
+    private JButton backButton;
+    private final String userName;
 
-    public WhatTheSnake() {
+    public WhatTheSnake(String userName) {
+        this.userName = userName;
         setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
         setBackground(Color.BLACK);
         setFocusable(true);
+        setLayout(null);
         addKeyListener(this);
 
         Border border = BorderFactory.createLineBorder(Color.BLACK, 10);
@@ -98,6 +103,22 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
         startButton.addActionListener(this);
         startButton.setBounds((BOARD_WIDTH - 150) / 2, (BOARD_HEIGHT - 50) / 2, 150, 50);
         add(startButton);
+
+        backButton = new JButton("Homepage");
+        backButton.setBounds(BOARD_WIDTH - 140, 10, 130, 40);
+        backButton.setBackground(new Color(0, 70, 70));
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(pixeloidFont.deriveFont(16f));
+        backButton.setFocusable(false);
+        backButton.addActionListener(e -> {
+            isRunning = false;
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window != null) {
+                window.dispose();
+            }
+            new Homepage(userName);
+        });
+        add(backButton);
     }
 
     private void createFood() {
@@ -150,6 +171,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
         if (isOutOfBounds || isBodyCollision) {
             isRunning = false;
             isGameOver = true;
+            startButton.setVisible(true);
             updateHighScore();
             return;
         }
@@ -278,6 +300,7 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
         score = 0;
         isGameOver = false;
         isRunning = true;
+        startButton.setVisible(false);
         createFood();
         bonusFood = null;
         new Thread(this).start();
@@ -360,12 +383,10 @@ public class WhatTheSnake extends JPanel implements KeyListener, Runnable, Actio
     }
 
     public static void main(String[] args) {
-
         JFrame gameFrame = new JFrame("What The Snake");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
-        WhatTheSnake gamePanel = new WhatTheSnake();
+        WhatTheSnake gamePanel = new WhatTheSnake("Player");
         gameFrame.add(gamePanel);
 
         gameFrame.pack();

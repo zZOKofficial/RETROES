@@ -1,5 +1,7 @@
 package homepage;
 
+import app.AppVersion;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -11,6 +13,7 @@ import games.whatTheSnake.WhatTheSnake;
 import games.streakTacToe.StreakTacToe;
 import highScores.HighScores;
 import login.LoginFrame;
+import sounds.MusicPlayer;
 
 public class Homepage extends JFrame {
     private String userName;
@@ -19,7 +22,7 @@ public class Homepage extends JFrame {
 
     public Homepage(String userName) {
         this.userName = userName;
-        setTitle("RETROES - Home");
+        setTitle("RETROES v" + AppVersion.VERSION + " - Home");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -76,26 +79,47 @@ public class Homepage extends JFrame {
         JButton creditsButton = gameButton("Credits", 540, 530);
         JButton logoutButton = gameButton("Logout", 840, 530);
 
+        MusicPlayer.getInstance().startWithFadeIn();
+
+        JButton musicButton = new JButton(MusicPlayer.getInstance().isMuted() ? "Music: OFF" : "Music: ON");
+        musicButton.setFont(textFont != null ? textFont.deriveFont(16f) : new Font("Arial", Font.PLAIN, 16));
+        musicButton.setBounds(1120, 10, 150, 40);
+        musicButton.setBackground(new Color(0, 70, 70));
+        musicButton.setForeground(Color.WHITE);
+        musicButton.setFocusPainted(false);
+        musicButton.addActionListener(e -> {
+            boolean muted = !MusicPlayer.getInstance().isMuted();
+            MusicPlayer.getInstance().setMuted(muted);
+            musicButton.setText(muted ? "Music: OFF" : "Music: ON");
+        });
+
 
         flapocalypseButton.addActionListener(e -> {
             dispose();
-            new Flapocalypse();
+            new Flapocalypse(userName);
         });
         streakTacToeButton.addActionListener(e -> {
             dispose();
-            new StreakTacToe();
+            new StreakTacToe(userName);
         });
         whatTheSnakeButton.addActionListener(e -> {
             dispose();
-            new WhatTheSnake();
+            WhatTheSnake gamePanel = new WhatTheSnake(userName);
+            JFrame gameFrame = new JFrame("What The Snake");
+            gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            gameFrame.add(gamePanel);
+            gameFrame.pack();
+            gameFrame.setLocationRelativeTo(null);
+            gameFrame.setVisible(true);
+            gamePanel.requestFocusInWindow();
         });
         highScoresButton.addActionListener(e -> {
             dispose();
-            new HighScores();
+            new HighScores(userName);
         });
         creditsButton.addActionListener(e -> {
             dispose();
-            new Credits();
+            new Credits(userName);
         });
         logoutButton.addActionListener(e -> {
             dispose();
@@ -110,6 +134,7 @@ public class Homepage extends JFrame {
         backgroundPanel.add(highScoresButton);
         backgroundPanel.add(creditsButton);
         backgroundPanel.add(logoutButton);
+        backgroundPanel.add(musicButton);
 
         setContentPane(backgroundPanel);
         setVisible(true);

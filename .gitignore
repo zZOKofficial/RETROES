@@ -1,2 +1,14 @@
-# Project exclude paths
+# Build output
 /out/
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Runtime / user data (created on first run — do not commit)
+data/users.txt
+highScores/highscore.txt

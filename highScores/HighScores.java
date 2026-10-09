@@ -1,5 +1,7 @@
 package highScores;
 
+import homepage.Homepage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -10,8 +12,10 @@ public class HighScores extends JFrame {
     private JTextArea scoreArea;
     private static final String SCORE_FILE = "highScores/highscore.txt";
     private Font titleFont, textFont;
+    private final String userName;
 
-    public HighScores() {
+    public HighScores(String userName) {
+        this.userName = userName;
         setTitle("RETROES - High Scores");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -21,7 +25,7 @@ public class HighScores extends JFrame {
 
 
         try {
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/04B03.ttf")).deriveFont(50f);
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/04b03.ttf")).deriveFont(50f);
             textFont = titleFont.deriveFont(24f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(titleFont);
@@ -49,8 +53,21 @@ public class HighScores extends JFrame {
 
         getContentPane().setBackground(Color.BLACK);
 
+        JButton backButton = new JButton("Homepage");
+        backButton.setFont(textFont != null ? textFont.deriveFont(20f) : new Font("Arial", Font.PLAIN, 20));
+        backButton.setFocusable(false);
+        backButton.addActionListener(e -> {
+            dispose();
+            new Homepage(userName);
+        });
+
+        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        southPanel.setBackground(Color.BLACK);
+        southPanel.add(backButton);
+
         add(titleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+        add(southPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -67,18 +84,5 @@ public class HighScores extends JFrame {
         }
 
         scoreArea.setText(String.join("\n", scores));
-    }
-
-    public static void saveScore(String playerName, int score) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SCORE_FILE, true))) {
-            writer.write(playerName + " - " + score);
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        new HighScores();
     }
 }

@@ -1,5 +1,7 @@
 package credits;
 
+import homepage.Homepage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -11,10 +13,12 @@ public class Credits extends JFrame {
     private Timer timer;
     private int yOffset;
     private static final int SPEED = 2;
-    private static final String FONT_PATH_04B03 = "fonts/04B03.ttf";
+    private static final String FONT_PATH_04B03 = "fonts/04b03.ttf";
     private static final String FONT_PATH_JOYSTIX = "fonts/joystixmonospace.otf";
+    private final String userName;
 
-    public Credits() {
+    public Credits(String userName) {
+        this.userName = userName;
         setTitle("Credits");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -35,7 +39,20 @@ public class Credits extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setBackground(Color.BLACK);
 
-        add(scrollPane);
+        JButton backButton = new JButton("Homepage");
+        backButton.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        backButton.setFocusable(false);
+        backButton.addActionListener(e -> {
+            dispose();
+            new Homepage(userName);
+        });
+
+        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        southPanel.setBackground(Color.BLACK);
+        southPanel.add(backButton);
+
+        add(scrollPane, BorderLayout.CENTER);
+        add(southPanel, BorderLayout.SOUTH);
         setLocationRelativeTo(null);
         setVisible(true);
 
@@ -153,9 +170,5 @@ public class Credits extends JFrame {
         lines.add("");
         lines.add("Thank You For Playing Our Game!");
         return lines;
-    }
-
-    public static void main(String[] args) {
-        new Credits();
     }
 }

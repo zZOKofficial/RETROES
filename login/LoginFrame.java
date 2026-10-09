@@ -1,11 +1,16 @@
 package login;
 
+import app.AppVersion;
 import createAccount.CreateAccountFrame;
 import homepage.Homepage;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,12 +18,16 @@ public class LoginFrame extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private static final String USER_DATA_FILE = "data/users.txt";
+    private static final int SALT_LENGTH = 16;
+    private static final int HASH_ITERATIONS = 120000;
+    private static final int HASH_KEY_LENGTH = 256;
     private static Map<String, String> userDatabase = new HashMap<>();
+    private static Map<String, String> userSalts = new HashMap<>();
     private Image backgroundImage;
     private Font titleFont, textFont;
 
     public LoginFrame() {
-        setTitle("RETROES - Login");
+        setTitle("RETROES v" + AppVersion.VERSION + " - Login");
         setSize(1280, 720);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,7 +67,10 @@ public class LoginFrame extends JFrame {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 2) {
+                if (parts.length == 3) {
+                    userDatabase.put(parts[0].trim(), parts[2].trim());
+                    userSalts.put(parts[0].trim(), parts[1].trim());
+                } else if (parts.length == 2) {
                     userDatabase.put(parts[0].trim(), parts[1].trim());
                 }
             }
@@ -125,14 +137,15 @@ public class LoginFrame extends JFrame {
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
-            String password = new String(passwordField.getPassword()).trim();
+            String password = new String(passwordField.getPassword());
 
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Both fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
+            if (userDatabase.containsKey(username) && verifyPassword(username, password)) {
+                migrateLegacyPassword(username, password);
                 JOptionPane.showMessageDialog(this, "Login Successful!");
                 dispose();
                 new Homepage(username);
@@ -160,5 +173,58 @@ public class LoginFrame extends JFrame {
 
         add(panel);
         setVisible(true);
+    }
+
+    public static String generateSalt() {
+        byte[] salt = new byte[SALT_LENGTH];
+        new SecureRandom().nextBytes(salt);
+        return Base64.getEncoder().encodeToString(salt);
+    }
+
+    public static String hashPassword(String password, String saltBase64) {
+        try {
+            byte[] salt = Base64.getDecoder().decode(saltBase64);
+            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, HASH_ITERATIONS, HASH_KEY_LENGTH);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            return Base64.getEncoder().encodeToString(factory.generateSecret(spec).getEncoded());
+        } catch (Exception e) {
+            throw new RuntimeException("Password hashing failed", e);
+        }
+    }
+
+    private boolean verifyPassword(String username, String password) {
+        String stored = userDatabase.get(username);
+        String salt = userSalts.get(username);
+        if (salt == null) {
+            return stored.equals(password);
+        }
+        return hashPassword(password, salt).equals(stored);
+    }
+
+    private void migrateLegacyPassword(String username, String password) {
+        if (userSalts.containsKey(username)) {
+            return;
+        }
+        String salt = generateSalt();
+        String hash = hashPassword(password, salt);
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DATA_FILE))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2 && parts[0].trim().equals(username)) {
+                    content.append(username).append(",").append(salt).append(",").append(hash).append("\n");
+                } else {
+                    content.append(line).append("\n");
+                }
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_DATA_FILE))) {
+                writer.write(content.toString());
+            }
+            userDatabase.put(username, hash);
+            userSalts.put(username, salt);
+        } catch (IOException e) {
+            System.out.println("Error migrating password for " + username);
+        }
     }
 }

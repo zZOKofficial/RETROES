@@ -139,10 +139,15 @@ public class CreateAccountFrame extends JFrame {
 
     private void registerUser() {
         String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword()).trim();
+        String password = new String(passwordField.getPassword());
 
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Both fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (username.contains(",")) {
+            JOptionPane.showMessageDialog(this, "Username cannot contain commas!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -151,7 +156,7 @@ public class CreateAccountFrame extends JFrame {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length >= 2) {
-                    if (parts[0].equals(username)) {
+                    if (parts[0].trim().equals(username)) {
                         JOptionPane.showMessageDialog(this, "Username already exists!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -161,9 +166,11 @@ public class CreateAccountFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Error loading user database.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
+        String salt = LoginFrame.generateSalt();
+        String hash = LoginFrame.hashPassword(password, salt);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            writer.write(username + "," + password);
+            writer.write(username + "," + salt + "," + hash);
             writer.newLine();
             JOptionPane.showMessageDialog(this, "Account Created Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose();
