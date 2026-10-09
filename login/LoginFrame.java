@@ -64,21 +64,7 @@ public class LoginFrame extends JFrame {
             }
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DATA_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 3) {
-                    userDatabase.put(parts[0].trim(), parts[2].trim());
-                    userSalts.put(parts[0].trim(), parts[1].trim());
-                } else if (parts.length == 2) {
-                    userDatabase.put(parts[0].trim(), parts[1].trim());
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading user database.");
-        }
-
+        loadUsers();
 
         JPanel panel = new JPanel() {
             @Override
@@ -145,6 +131,8 @@ public class LoginFrame extends JFrame {
                 return;
             }
 
+            loadUsers();
+
             if (userDatabase.containsKey(username) && verifyPassword(username, password)) {
                 migrateLegacyPassword(username, password);
                 JOptionPane.showMessageDialog(this, "Login Successful!");
@@ -180,6 +168,26 @@ public class LoginFrame extends JFrame {
         byte[] salt = new byte[SALT_LENGTH];
         new SecureRandom().nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
+    }
+
+    static void loadUsers() {
+        userDatabase.clear();
+        userSalts.clear();
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DATA_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    userDatabase.put(parts[0].trim(), parts[2].trim());
+                    userSalts.put(parts[0].trim(), parts[1].trim());
+                } else if (parts.length == 2) {
+                    userDatabase.put(parts[0].trim(), parts[1].trim());
+                    userSalts.remove(parts[0].trim());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading user database.");
+        }
     }
 
     public static String hashPassword(String password, String saltBase64) {

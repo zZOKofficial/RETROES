@@ -1,7 +1,15 @@
 # Changelog
 
 All notable changes to RETROES are documented here.
-Versioning: `MAJOR.MINOR` (currently `1.00`).
+Versioning: `MAJOR.MINOR` (currently `1.01`).
+
+## [1.01] – 2026-10-09
+
+Hotfix: registration → immediate login failed.
+
+### Fixed
+- **"Invalid username or password" right after registering** – the success dialog and navigation to the Login screen ran *inside* the `BufferedWriter` try-block, so the new Login screen read `users.txt` before the registration line was flushed to disk. Registration now closes the file before navigating.
+- **Stale in-memory user cache** – `LoginFrame` kept static user maps that were never cleared and only read once per screen construction; login now reloads the file (clearing old entries) on every login attempt, and legacy 2-part entries drop any stale salt left from a previous hashed entry.
 
 ## [1.00] – 2026-10-09
 
